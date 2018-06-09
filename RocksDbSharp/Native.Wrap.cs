@@ -140,6 +140,7 @@ namespace RocksDbSharp
         }
 
         public byte[] rocksdb_get(
+
             IntPtr db,
             IntPtr read_options,
             byte[] key,
@@ -147,6 +148,18 @@ namespace RocksDbSharp
             ColumnFamilyHandle cf = null)
         {
             var result = rocksdb_get(db, read_options, key, keyLength == 0 ? key.Length : keyLength, out IntPtr errptr, cf);
+            if (errptr != IntPtr.Zero)
+                throw new RocksDbException(errptr);
+            return result;
+        }
+
+        public RocksMemoryHandle rocksdb_get(
+            IntPtr db,
+            IntPtr read_options,
+            ReadOnlySpan<byte> key,
+            ColumnFamilyHandle cf = null)
+        {
+            var result = rocksdb_get(db, read_options, key, out IntPtr errptr, cf);
             if (errptr != IntPtr.Zero)
                 throw new RocksDbException(errptr);
             return result;
@@ -250,6 +263,12 @@ namespace RocksDbSharp
             return result;
         }
 
+        public unsafe ReadOnlySpan<byte> rocksdb_iter_key_ref(IntPtr iterator)
+        {
+            IntPtr buffer = rocksdb_iter_key(iterator, out UIntPtr length);
+            return new ReadOnlySpan<byte>((void *)buffer, (int)length);
+        }
+
         public byte[] rocksdb_iter_value(IntPtr iterator)
         {
             IntPtr buffer = rocksdb_iter_value(iterator, out UIntPtr length);
@@ -258,6 +277,12 @@ namespace RocksDbSharp
             // Do not free, this is owned by the iterator and will be freed there
             //rocksdb_free(buffer);
             return result;
+        }
+
+        public unsafe ReadOnlySpan<byte> rocksdb_iter_value_ref(IntPtr iterator)
+        {
+            IntPtr buffer = rocksdb_iter_value(iterator, out UIntPtr length);
+            return new ReadOnlySpan<byte>((void*)buffer, (int)length);
         }
 
         public IntPtr rocksdb_create_column_family(

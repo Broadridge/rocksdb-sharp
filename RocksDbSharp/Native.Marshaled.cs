@@ -156,6 +156,23 @@ namespace RocksDbSharp
             return result;
         }
 
+        public RocksMemoryHandle rocksdb_get(
+            IntPtr db,
+            IntPtr read_options,
+            ReadOnlySpan<byte> key,
+            out IntPtr errptr,
+            ColumnFamilyHandle cf = null)
+        {
+            var resultPtr = cf == null
+                ? rocksdb_get(db, read_options, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length, out UIntPtr valueLength, out errptr)
+                : rocksdb_get_cf(db, read_options, cf.Handle, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length, out valueLength, out errptr);
+
+            if (errptr != IntPtr.Zero || resultPtr == IntPtr.Zero)
+                return default;
+
+            return new RocksMemoryHandle(resultPtr, (int)valueLength);
+        }
+
         /// <summary>
         /// Executes a multi_get with automatic marshalling
         /// </summary>
@@ -609,6 +626,11 @@ namespace RocksDbSharp
             return rocksdb_writebatch_create_from(rep, fromSize);
         }
 
+        public void rocksdb_writebatch_put(IntPtr writeBatch, ReadOnlySpan<byte> key, ReadOnlySpan<byte> val)
+        {
+            rocksdb_writebatch_put(writeBatch, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length, ref MemoryMarshal.GetReference(val), (UIntPtr)val.Length);
+        }
+
         public void rocksdb_writebatch_put(IntPtr writeBatch,
                                            byte[] key, ulong klen,
                                            byte[] val, ulong vlen)
@@ -643,6 +665,11 @@ namespace RocksDbSharp
             UIntPtr sklength = (UIntPtr)klen;
             UIntPtr svlength = (UIntPtr)vlen;
             rocksdb_writebatch_put_cf(writeBatch, column_family, key, sklength, val, svlength);
+        }
+
+        public unsafe void rocksdb_writebatch_put_cf(IntPtr writeBatch, IntPtr column_family, ReadOnlySpan<byte> key, ReadOnlySpan<byte> val)
+        {
+            rocksdb_writebatch_put_cf(writeBatch, column_family, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length, ref MemoryMarshal.GetReference(val), (UIntPtr)val.Length);
         }
 
         public void rocksdb_writebatch_merge(IntPtr writeBatch,

@@ -109,6 +109,14 @@ namespace RocksDbSharp
                 Native.Instance.rocksdb_writebatch_put_cf(handle, cf.Handle, key, klen, val, vlen);
         }
 
+        public unsafe void Put(ReadOnlySpan<byte> key, ReadOnlySpan<byte> val, ColumnFamilyHandle cf = null)
+        {
+            if (cf == null)
+                Native.Instance.rocksdb_writebatch_put(handle, key, val);
+            else
+                Native.Instance.rocksdb_writebatch_put_cf(handle, cf.Handle, key, val);
+        }
+
         public WriteBatch Putv(int numKeys, IntPtr keysList, IntPtr keysListSizes, int numValues, IntPtr valuesList, IntPtr valuesListSizes)
         {
             Native.Instance.rocksdb_writebatch_putv(handle, numKeys, keysList, keysListSizes, numValues, valuesList, valuesListSizes);

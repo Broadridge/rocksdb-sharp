@@ -239,7 +239,18 @@ public unsafe abstract /* char* */ IntPtr rocksdb_get(
 /* Returns NULL if not found.  A malloc()ed array otherwise.
    Stores the length of the array in *vallen. */
 public unsafe abstract /* char* */ IntPtr rocksdb_get(
+    /*rocksdb_t**/ IntPtr db, /*const rocksdb_readoptions_t**/ IntPtr read_options, /*const*/ ref byte key,
+            UIntPtr keylen, /*(size_t*)*/ out size_t vallen, out IntPtr errptr);
+
+/* Returns NULL if not found.  A malloc()ed array otherwise.
+   Stores the length of the array in *vallen. */
+public unsafe abstract /* char* */ IntPtr rocksdb_get(
     /*rocksdb_t**/ IntPtr db, /*const rocksdb_readoptions_t**/ IntPtr read_options, /*const*/ byte[] key,
+            UIntPtr keylen, /*(size_t*)*/ out size_t vallen, out IntPtr errptr);
+
+public unsafe abstract /* char* */ IntPtr rocksdb_get_cf(
+    /*rocksdb_t**/ IntPtr db, /*const rocksdb_readoptions_t**/ IntPtr read_options,
+    /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family, /*const*/ ref byte key,
             UIntPtr keylen, /*(size_t*)*/ out size_t vallen, out IntPtr errptr);
 
 public unsafe abstract /* char* */ IntPtr rocksdb_get_cf(
@@ -435,9 +446,17 @@ public unsafe abstract void rocksdb_writebatch_put(/*(rocksdb_writebatch_t*)*/ I
                                                        /*(size_t)*/ size_t klen,
                                                        /*const*/ byte* val,
                                                        /*(size_t)*/ size_t vlen);
+public unsafe abstract void rocksdb_writebatch_put(/*(rocksdb_writebatch_t*)*/ IntPtr writeBatch,
+                                                       /*const*/ ref byte key,
+                                                       /*(size_t)*/ size_t klen,
+                                                       /*const*/ ref byte val,
+                                                       /*(size_t)*/ size_t vlen);
 public abstract void rocksdb_writebatch_put_cf(
     /*(rocksdb_writebatch_t*)*/ IntPtr writeBatch, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
     /*const*/ byte[] key, /*(size_t)*/ size_t klen, /*const*/ byte[] val, /*(size_t)*/ size_t vlen);
+public abstract void rocksdb_writebatch_put_cf(
+    /*(rocksdb_writebatch_t*)*/ IntPtr writeBatch, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
+    /*const*/ ref byte key, /*(size_t)*/ size_t klen, /*const*/ ref byte val, /*(size_t)*/ size_t vlen);
 public unsafe abstract void rocksdb_writebatch_put_cf(
     /*(rocksdb_writebatch_t*)*/ IntPtr writeBatch, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
     /*const*/ byte* key, /*(size_t)*/ size_t klen, /*const*/ byte* val, /*(size_t)*/ size_t vlen);

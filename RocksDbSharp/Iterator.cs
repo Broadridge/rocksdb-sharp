@@ -31,6 +31,10 @@ namespace RocksDbSharp
 
         public IntPtr Handle { get { return handle; } }
 
+        public ReadOnlySpan<byte> KeySpan => Native.Instance.rocksdb_iter_key_ref(handle);
+
+        public ReadOnlySpan<byte> ValueSpan => Native.Instance.rocksdb_iter_value_ref(handle);
+
         public void Dispose()
         {
             if (handle != IntPtr.Zero)
