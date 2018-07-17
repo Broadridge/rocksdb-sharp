@@ -412,6 +412,13 @@ namespace RocksDbSharp
             rocksdb_writebatch_wi_put(writeBatch, key, sklength, val, svlength);
         }
 
+        public unsafe void rocksdb_writebatch_wi_put(IntPtr writeBatch,
+                                                  ReadOnlySpan<byte> key,
+                                                  ReadOnlySpan<byte> val)
+        {
+            rocksdb_writebatch_wi_put(writeBatch, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length, ref MemoryMarshal.GetReference(val), (UIntPtr)val.Length);
+        }
+
         public void rocksdb_writebatch_wi_put_cf(IntPtr writeBatch, IntPtr column_family,
                                               byte[] key, ulong klen,
                                               byte[] val, ulong vlen)
@@ -428,6 +435,13 @@ namespace RocksDbSharp
             UIntPtr sklength = (UIntPtr)klen;
             UIntPtr svlength = (UIntPtr)vlen;
             rocksdb_writebatch_wi_put_cf(writeBatch, column_family, key, sklength, val, svlength);
+        }
+
+        public unsafe void rocksdb_writebatch_wi_put_cf(IntPtr writeBatch, IntPtr column_family,
+                                                     ReadOnlySpan<byte> key,
+                                                     ReadOnlySpan<byte> val)
+        {
+            rocksdb_writebatch_wi_put_cf(writeBatch, column_family, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length, ref MemoryMarshal.GetReference(val), (UIntPtr)val.Length);
         }
 
         public void rocksdb_writebatch_wi_put(IntPtr writeOptions, string key, string val, Encoding encoding)

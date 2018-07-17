@@ -569,14 +569,22 @@ public abstract void rocksdb_writebatch_wi_put(/*(rocksdb_writebatch_wi_t*)*/ In
                                                        /*(size_t)*/ size_t klen,
                                                        /*(const char*)*/ byte[] val,
                                                        /*(size_t)*/ size_t vlen);
+public abstract void rocksdb_writebatch_wi_put(/*(rocksdb_writebatch_wi_t*)*/ IntPtr b,
+                                                        /*(const char*)*/ ref byte key,
+                                                        /*(size_t)*/ size_t klen,
+                                                        /*(const char*)*/ ref byte val,
+                                                        /*(size_t)*/ size_t vlen);
 public abstract unsafe void rocksdb_writebatch_wi_put(/*(rocksdb_writebatch_wi_t*)*/ IntPtr b,
-                                                       /*(const char*)*/ byte* key,
-                                                       /*(size_t)*/ size_t klen,
-                                                       /*(const char*)*/ byte* val,
-                                                       /*(size_t)*/ size_t vlen);
+                                                /*(const char*)*/ byte* key,
+                                                /*(size_t)*/ size_t klen,
+                                                /*(const char*)*/ byte* val,
+                                                /*(size_t)*/ size_t vlen);
 public abstract void rocksdb_writebatch_wi_put_cf(
     /*(rocksdb_writebatch_wi_t*)*/ IntPtr b, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
     /*(const char*)*/ byte[] key, /*(size_t)*/ size_t klen, /*(const char*)*/ byte[] val, /*(size_t)*/ size_t vlen);
+public abstract void rocksdb_writebatch_wi_put_cf(
+    /*(rocksdb_writebatch_wi_t*)*/ IntPtr b, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
+    /*(const char*)*/ ref byte key, /*(size_t)*/ size_t klen, /*(const char*)*/ ref byte val, /*(size_t)*/ size_t vlen);
 public abstract unsafe void rocksdb_writebatch_wi_put_cf(
     /*(rocksdb_writebatch_wi_t*)*/ IntPtr b, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
     /*(const char*)*/ byte* key, /*(size_t)*/ size_t klen, /*(const char*)*/ byte* val, /*(size_t)*/ size_t vlen);
