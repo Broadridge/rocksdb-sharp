@@ -263,5 +263,26 @@ namespace RocksDbSharp
                 encoding = Encoding.UTF8;
             CompactRange(encoding.GetBytes(start), encoding.GetBytes(limit), cf);
         }
+
+        public LiveFiles GetLiveFiles() => new LiveFiles(this.Handle);
+
+        public void Flush(FlushOptions options) => Native.Instance.rocksdb_flush(this.Handle, options.Handle);
+
+        public void DeleteFile(string name)
+        {
+            Native.Instance.rocksdb_delete_file(this.Handle, name);
+        }
+
+        public void DeleteFileInRange(byte[] start, byte[] limit, ColumnFamilyHandle cf = null)
+        {
+            if (cf != null)
+            {
+                Native.Instance.rocksdb_delete_file_in_range_cf(this.Handle, cf.Handle, start, limit);
+            }
+            else
+            {
+                Native.Instance.rocksdb_delete_file_in_range(this.Handle, start, limit);
+            }
+        }
     }
 }

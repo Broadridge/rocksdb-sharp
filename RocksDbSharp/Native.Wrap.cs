@@ -487,5 +487,29 @@ namespace RocksDbSharp
                 throw new RocksDbException(errptr);
             return result;
         }
+        
+        public void rocksdb_flush(IntPtr db,  IntPtr flush_options)
+        {
+            rocksdb_flush(db, flush_options, out var errptr);
+            if (errptr != IntPtr.Zero)
+                throw new RocksDbException(errptr);
+        }
+
+        public void rocksdb_delete_file_in_range(IntPtr db, byte[] start_key, byte[] limit_key)
+        {
+            rocksdb_delete_file_in_range(
+                db, start_key, (UIntPtr)start_key.Length, limit_key, (UIntPtr)limit_key.Length, out var errptr);
+            if (errptr != IntPtr.Zero)
+                throw new RocksDbException(errptr);
+        }
+
+        public void rocksdb_delete_file_in_range_cf(
+            IntPtr db, IntPtr column_family, byte[] start_key, byte[] limit_key)
+        {
+            rocksdb_delete_file_in_range_cf(
+                db, column_family, start_key, (UIntPtr)start_key.Length, limit_key, (UIntPtr)limit_key.Length, out var errptr);
+            if (errptr != IntPtr.Zero)
+                throw new RocksDbException(errptr);
+        }
     }
 }
