@@ -6,16 +6,16 @@ using System.Runtime.InteropServices;
 
 namespace RocksDbSharp
 {
-    public unsafe class LiveFiles : IDisposable, IReadOnlyCollection<SstFileMetaData>
+    public unsafe class LiveFiles : IDisposable, IReadOnlyCollection<SstFileMetaData<Memory<byte>>>
     {
-        private readonly SstFileMetaData[] data;
+        private readonly SstFileMetaData<Memory<byte>>[] data;
         
         public LiveFiles(IntPtr dbHandle)
         {
             this.Handle = Native.Instance.rocksdb_livefiles(dbHandle);
 
             var count = Native.Instance.rocksdb_livefiles_count(this.Handle);
-            this.data = new SstFileMetaData[count];
+            this.data = new SstFileMetaData<Memory<byte>>[count];
             for (var i = 0; i < count; i++)
             {
                 var name = Native.Instance.rocksdb_livefiles_name(this.Handle, i);
@@ -24,7 +24,7 @@ namespace RocksDbSharp
                 var smallestKey = Native.Instance.rocksdb_livefiles_smallestkey(this.Handle, i, out var skSize);
                 var largestKey = Native.Instance.rocksdb_livefiles_largestkey(this.Handle, i, out var lkSize);
 
-                this.data[i] = new SstFileMetaData(
+                this.data[i] = new SstFileMetaData<Memory<byte>>(
                     Marshal.PtrToStringAnsi(name),
                     level,
                     size,
@@ -40,11 +40,11 @@ namespace RocksDbSharp
 
         public IntPtr Handle { get; private set; }
 
-        public SstFileMetaData this[int i] => this.data[i];
+        public SstFileMetaData<Memory<byte>> this[int i] => this.data[i];
 
         public int Count => data.Length;
 
-        public IEnumerator<SstFileMetaData> GetEnumerator() => this.data.AsEnumerable().GetEnumerator();
+        public IEnumerator<SstFileMetaData<Memory<byte>>> GetEnumerator() => this.data.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

@@ -1068,22 +1068,30 @@ public abstract void rocksdb_ratelimiter_destroy(rocksdb_ratelimiter_t*);
 
 
 #region Compaction Filter
-#if ROCKSDB_COMPACTION_FILTER
+
+public delegate void CompactionFilterDestructor(IntPtr state);
+public delegate bool CompactionFilterFilter(IntPtr state, int level,
+    IntPtr key, size_t key_length,
+    IntPtr existing_value, size_t value_length,
+    IntPtr new_value, size_t new_value_length,
+    out bool value_changed);
+public delegate string CompactionFilterName(IntPtr state);
 
 public abstract /* rocksdb_compactionfilter_t* */ IntPtr rocksdb_compactionfilter_create(
-    void* state, void (*destructor)(void*),
-    unsigned char (*filter)(void*, int level, /*const*/ byte* key,
-                            size_t key_length, const char* existing_value,
-                            size_t value_length, char** new_value,
-                            size_t* new_value_length,
-                            unsigned char* value_changed),
-    const char* (*name)(void*));
-public abstract void rocksdb_compactionfilter_set_ignore_snapshots(
-    rocksdb_compactionfilter_t*, unsigned char);
-public abstract void rocksdb_compactionfilter_destroy(
-    rocksdb_compactionfilter_t*);
+    /* void* */ IntPtr state,
+    /* void (*destructor)(void*) */ CompactionFilterDestructor filterDesctuctor,
+    /* unsigned char (*filter)(void*, int level, const byte* key,
+        size_t key_length, const char* existing_value,
+        size_t value_length, char** new_value,
+        size_t* new_value_length,
+        unsigned char* value_changed) */ CompactionFilterFilter filter,
+    /* const char* (*name)(void*) */ CompactionFilterName filterName);
 
-#endif
+public abstract void rocksdb_compactionfilter_set_ignore_snapshots(
+    /* rocksdb_compactionfilter_t* */ IntPtr handle, /* unsigned char */ bool value);
+public abstract void rocksdb_compactionfilter_destroy(
+    /* rocksdb_compactionfilter_t* */ IntPtr handle);
+
 #endregion
 
 #region Compaction Filter Context

@@ -2,16 +2,16 @@
 
 namespace RocksDbSharp
 {
-    public struct SstFileMetaData
+    public struct SstFileMetaData<TKey>
     {
         public readonly string Name;
         public readonly int Level;
         public readonly ulong Size;
-        public readonly Memory<byte> SmallestKey;
-        public readonly Memory<byte> LargestKey;
+        public readonly TKey SmallestKey;
+        public readonly TKey LargestKey;
 
         public SstFileMetaData(
-            string name, int level, ulong size, Memory<byte> smallestKey, Memory<byte> largestKey)
+            string name, int level, ulong size, TKey smallestKey, TKey largestKey)
         {
             Name = name;
             Level = level;
