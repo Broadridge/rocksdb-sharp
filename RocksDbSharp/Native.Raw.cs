@@ -628,12 +628,18 @@ public abstract void rocksdb_writebatch_wi_delete(/*(rocksdb_writebatch_wi_t*)*/
 public abstract unsafe void rocksdb_writebatch_wi_delete(/*(rocksdb_writebatch_wi_t*)*/ IntPtr b,
                                                           /*(const char*)*/ byte* key,
                                                           /*(size_t)*/ size_t klen);
+public abstract unsafe void rocksdb_writebatch_wi_delete(/*(rocksdb_writebatch_wi_t*)*/ IntPtr b,
+                                                          /*(const char*)*/ ref byte key,
+                                                          /*(size_t)*/ size_t klen);
 public abstract void rocksdb_writebatch_wi_delete_cf(
     /*(rocksdb_writebatch_wi_t*)*/ IntPtr b, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
     /*(const char*)*/ byte[] key, /*(size_t)*/ size_t klen);
 public abstract unsafe void rocksdb_writebatch_wi_delete_cf(
     /*(rocksdb_writebatch_wi_t*)*/ IntPtr b, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
     /*(const char*)*/ byte* key, /*(size_t)*/ size_t klen);
+public abstract unsafe void rocksdb_writebatch_wi_delete_cf(
+    /*(rocksdb_writebatch_wi_t*)*/ IntPtr b, /*(rocksdb_column_family_handle_t*)*/ IntPtr column_family,
+    /*(const char*)*/ ref byte key, /*(size_t)*/ size_t klen);
 public abstract void rocksdb_writebatch_wi_deletev(
     /*(rocksdb_writebatch_wi_t*)*/ IntPtr b, int num_keys, /*(const char* const*)*/ IntPtr keys_list,
     /*(const size_t*)*/ IntPtr keys_list_sizes);
