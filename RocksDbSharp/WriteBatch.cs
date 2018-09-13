@@ -191,6 +191,14 @@ namespace RocksDbSharp
                 Native.Instance.rocksdb_writebatch_delete_cf(handle, cf.Handle, key, klen);
         }
 
+        public unsafe void Delete(ReadOnlySpan<byte> key, ColumnFamilyHandle cf = null)
+        {
+            if (cf == null)
+                Native.Instance.rocksdb_writebatch_wi_delete(handle, key);
+            else
+                Native.Instance.rocksdb_writebatch_wi_delete_cf(handle, cf.Handle, key);
+        }
+
         public unsafe void Deletev(int numKeys, IntPtr keysList, IntPtr keysListSizes, ColumnFamilyHandle cf = null)
         {
             if (cf == null)
