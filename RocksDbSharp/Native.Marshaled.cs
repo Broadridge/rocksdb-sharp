@@ -736,6 +736,11 @@ namespace RocksDbSharp
             rocksdb_writebatch_delete(writeBatch, key, sklength);
         }
 
+        public unsafe void rocksdb_writebatch_delete(IntPtr writeBatch, ReadOnlySpan<byte> key)
+        {
+            rocksdb_writebatch_delete(writeBatch, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length);
+        }
+
         public void rocksdb_writebatch_delete_cf(IntPtr writeBatch, IntPtr column_family,
                                                  byte[] key, ulong klen)
         {
@@ -748,6 +753,11 @@ namespace RocksDbSharp
         {
             UIntPtr sklength = (UIntPtr)klen;
             rocksdb_writebatch_delete_cf(writeBatch, column_family, key, sklength);
+        }
+
+        public unsafe void rocksdb_writebatch_delete_cf(IntPtr writeBatch, IntPtr column_family, ReadOnlySpan<byte> key)
+        {
+            rocksdb_writebatch_delete_cf(writeBatch, column_family, ref MemoryMarshal.GetReference(key), (UIntPtr)key.Length);
         }
 
         public void rocksdb_writebatch_delete_range(IntPtr b,
