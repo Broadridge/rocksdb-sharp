@@ -1074,22 +1074,30 @@ public abstract void rocksdb_ratelimiter_destroy(rocksdb_ratelimiter_t*);
 
 
 #region Compaction Filter
-#if ROCKSDB_COMPACTION_FILTER
+
+public delegate void CompactionFilterDestructor(IntPtr state);
+public delegate bool CompactionFilterFilter(IntPtr state, int level,
+    IntPtr key, size_t key_length,
+    IntPtr existing_value, size_t value_length,
+    IntPtr new_value, size_t new_value_length,
+    out bool value_changed);
+public delegate string CompactionFilterName(IntPtr state);
 
 public abstract /* rocksdb_compactionfilter_t* */ IntPtr rocksdb_compactionfilter_create(
-    void* state, void (*destructor)(void*),
-    unsigned char (*filter)(void*, int level, /*const*/ byte* key,
-                            size_t key_length, const char* existing_value,
-                            size_t value_length, char** new_value,
-                            size_t* new_value_length,
-                            unsigned char* value_changed),
-    const char* (*name)(void*));
-public abstract void rocksdb_compactionfilter_set_ignore_snapshots(
-    rocksdb_compactionfilter_t*, unsigned char);
-public abstract void rocksdb_compactionfilter_destroy(
-    rocksdb_compactionfilter_t*);
+    /* void* */ IntPtr state,
+    /* void (*destructor)(void*) */ CompactionFilterDestructor filterDesctuctor,
+    /* unsigned char (*filter)(void*, int level, const byte* key,
+        size_t key_length, const char* existing_value,
+        size_t value_length, char** new_value,
+        size_t* new_value_length,
+        unsigned char* value_changed) */ CompactionFilterFilter filter,
+    /* const char* (*name)(void*) */ CompactionFilterName filterName);
 
-#endif
+public abstract void rocksdb_compactionfilter_set_ignore_snapshots(
+    /* rocksdb_compactionfilter_t* */ IntPtr handle, /* unsigned char */ bool value);
+public abstract void rocksdb_compactionfilter_destroy(
+    /* rocksdb_compactionfilter_t* */ IntPtr handle);
+
 #endregion
 
 #region Compaction Filter Context
@@ -1230,15 +1238,13 @@ public abstract void rocksdb_compactoptions_set_target_level(
 #endregion
 
 #region Flush options
-#if ROCKSDB_FLUSH_OPTIONS
 
 public abstract /* rocksdb_flushoptions_t* */ IntPtr rocksdb_flushoptions_create();
-public abstract void rocksdb_flushoptions_destroy(
-    rocksdb_flushoptions_t*);
-public abstract void rocksdb_flushoptions_set_wait(
-    rocksdb_flushoptions_t*, unsigned char);
 
-#endif
+public abstract void rocksdb_flushoptions_destroy(/* rocksdb_flushoptions_t* */ IntPtr options);
+
+public abstract void rocksdb_flushoptions_set_wait(/* rocksdb_flushoptions_t* */ IntPtr options, byte value);
+
 #endregion
 
 #region Cache
@@ -1372,22 +1378,29 @@ public abstract void rocksdb_fifo_compaction_options_set_max_table_files_size(
 public abstract void rocksdb_fifo_compaction_options_destroy(
     rocksdb_fifo_compaction_options_t* fifo_opts);
 
-public abstract int rocksdb_livefiles_count(
-    const rocksdb_livefiles_t*);
-public abstract /* const char* */ IntPtr rocksdb_livefiles_name(
-    const rocksdb_livefiles_t*, int index);
-public abstract int rocksdb_livefiles_level(
-    const rocksdb_livefiles_t*, int index);
-public abstract /* size_t */ ulong rocksdb_livefiles_size(const rocksdb_livefiles_t*, int index);
-public abstract /* const char* */ IntPtr rocksdb_livefiles_smallestkey(
-    const rocksdb_livefiles_t*, int index, size_t* size);
-public abstract /* const char* */ IntPtr rocksdb_livefiles_largestkey(
-    const rocksdb_livefiles_t*, int index, size_t* size);
-public abstract void rocksdb_livefiles_destroy(
-    const rocksdb_livefiles_t*);
-
 #endif
 #endregion
+
+public abstract int rocksdb_livefiles_count(
+    /* const rocksdb_livefiles_t* */ IntPtr livefiles);
+
+public abstract /* const char* */ IntPtr rocksdb_livefiles_name(
+    /* const rocksdb_livefiles_t* */ IntPtr livefiles, int index);
+
+public abstract int rocksdb_livefiles_level(
+    /* const rocksdb_livefiles_t* */ IntPtr livefiles, int index);
+
+public abstract /* size_t */ ulong rocksdb_livefiles_size(
+    /* const rocksdb_livefiles_t* */ IntPtr livefiles, int index);
+
+public abstract /* const char* */ IntPtr rocksdb_livefiles_smallestkey(
+    /* const rocksdb_livefiles_t* */ IntPtr livefiles, int index, /* size_t* */ out size_t size);
+
+public abstract /* const char* */ IntPtr rocksdb_livefiles_largestkey(
+    /* const rocksdb_livefiles_t* */ IntPtr livefiles, int index, /* size_t* */ out size_t size);
+
+public abstract void rocksdb_livefiles_destroy(
+    /* const rocksdb_livefiles_t* */ IntPtr livefiles);
 
 #region Utility Helpers
 #if ROCKSDB_UTILITY_HELPERS
@@ -1395,17 +1408,21 @@ public abstract void rocksdb_livefiles_destroy(
 public abstract void rocksdb_get_options_from_string(
     /* const rocksdb_options_t* */ IntPtr base_options, const char* opts_str,
     /* rocksdb_options_t* */ IntPtr new_options, out IntPtr errptr);
+    
+#endif
+
 public abstract void rocksdb_delete_file_in_range(
-    /* rocksdb_t* */ IntPtr db, const char* start_key, size_t start_key_len,
-    const char* limit_key, size_t limit_key_len, char** errptr);
+    /* rocksdb_t* */ IntPtr db, 
+    /* const char* */ byte[] start_key, /* size_t */ size_t start_key_len,
+    /* const char* */ byte[] limit_key, /* size_t */ size_t limit_key_len, 
+    /* char** */ out IntPtr errptr);
 
 public abstract void rocksdb_delete_file_in_range_cf(
-    /* rocksdb_t* */ IntPtr db, rocksdb_column_family_handle_t* column_family,
-    const char* start_key, size_t start_key_len, const char* limit_key,
-    size_t limit_key_len, char** errptr);
-
-
-#endif
+    /* rocksdb_t* */ IntPtr db, /* rocksdb_column_family_handle_t* */ IntPtr column_family,
+    /* const char* */ byte[] start_key, /* size_t */ size_t start_key_len,
+    /* const char* */ byte[] limit_key, /* size_t */ size_t limit_key_len,
+    /* char** */ out IntPtr errptr);
+        
 #endregion
 
 // referring to convention (3), this should be used by client
